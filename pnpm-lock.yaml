@@ -13,7 +13,7 @@ importers:
         version: 2.13.3(@swc/helpers@0.5.15)(postcss@8.5.3)(typescript@5.7.3)
       vite-kuromoji.ts:
         specifier: github:materialfill65/vite-kuromoji.ts
-        version: https://codeload.github.com/materialfill65/vite-kuromoji.ts/tar.gz/da14faa1dd27af079ccd6912e2cd7ee64e5190b1
+        version: https://codeload.github.com/materialfill65/vite-kuromoji.ts/tar.gz/c45b0e9e04d649acc1fe609c714b0a88a70b78b0
     devDependencies:
       buffer:
         specifier: ^5.5.0||^6.0.0
@@ -1197,8 +1197,8 @@ packages:
     resolution: {integrity: sha512-6Z7Ma2aVEWisaL6TvBCy7P8rm2LQoPv6dJ7ecIaIixHcwfbJ0x7mWdbcwlIM5IGQxPZSFYeqRCqlOOeKoJYMkw==}
     engines: {node: '>= 4'}
 
-  vite-kuromoji.ts@https://codeload.github.com/materialfill65/vite-kuromoji.ts/tar.gz/da14faa1dd27af079ccd6912e2cd7ee64e5190b1:
-    resolution: {tarball: https://codeload.github.com/materialfill65/vite-kuromoji.ts/tar.gz/da14faa1dd27af079ccd6912e2cd7ee64e5190b1}
+  vite-kuromoji.ts@https://codeload.github.com/materialfill65/vite-kuromoji.ts/tar.gz/c45b0e9e04d649acc1fe609c714b0a88a70b78b0:
+    resolution: {tarball: https://codeload.github.com/materialfill65/vite-kuromoji.ts/tar.gz/c45b0e9e04d649acc1fe609c714b0a88a70b78b0}
     version: 0.1.2
     engines: {node: '>= 12'}
 
@@ -2538,7 +2538,7 @@ snapshots:
 
   utility-types@3.11.0: {}
 
-  vite-kuromoji.ts@https://codeload.github.com/materialfill65/vite-kuromoji.ts/tar.gz/da14faa1dd27af079ccd6912e2cd7ee64e5190b1: {}
+  vite-kuromoji.ts@https://codeload.github.com/materialfill65/vite-kuromoji.ts/tar.gz/c45b0e9e04d649acc1fe609c714b0a88a70b78b0: {}
 
   vite@6.1.1(lightningcss@1.29.1):
     dependencies:
