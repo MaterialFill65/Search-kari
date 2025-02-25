@@ -1,0 +1,20 @@
+{
+  "name": "searcher",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "buffer": "^5.5.0||^6.0.0",
+    "typescript": "~5.7.2",
+    "vite": "^6.1.0"
+  },
+  "dependencies": {
+    "parcel": "^2.13.3",
+    "vite-kuromoji.ts": "github:materialfill65/vite-kuromoji.ts"
+  }
+}
