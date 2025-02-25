@@ -130,36 +130,51 @@ import fetchIndex from "./fetchIndex";
   function parseQuery(query: string): {
     author?: string;
     keywords: string[];
-    filters: Set<string>;  // フィルター単語のセット
+    negativeKeywords: string[];
+    filters: Set<string>;
   } {
     const authorMatch = query.match(/author:(\S+)/);
     const author = authorMatch?.[1];
 
     const remainingQuery = query.replace(/author:\S+/, '').trim();
-    const keywords = remainingQuery.split(/\s+/).filter(k => k.length > 0);
+    const rawKeywords = remainingQuery.split(/\s+/).filter(k => k.length > 0);
+
+    // キーワードを通常とマイナスに分類
+    const keywords: string[] = [];
+    const negativeKeywords: string[] = [];
+    rawKeywords.forEach(k => {
+      if (k.startsWith('-')) {
+        negativeKeywords.push(k.slice(1));
+      } else {
+        keywords.push(k);
+      }
+    });
+    console.log("neg:", negativeKeywords)
+    console.log("pos:", keywords)
 
     // フィルター単語を検出
     const filters = new Set<string>();
     for (const [filterId, pattern] of Object.entries(FILTERS)) {
-      if (keywords.some(k => pattern.test(k))) {
+      if ([...keywords].some(k => pattern.test(k))) {
         filters.add(filterId);
       }
     }
 
     // フィルター単語を検索キーワードから除外
-    const normalKeywords = keywords.filter(k =>
-      !Object.values(FILTERS).some(pattern => pattern.test(k))
-    );
+    const filterPattern = Object.values(FILTERS).map(p => p.source).join('|');
+    const filterRegex = new RegExp(filterPattern, 'i');
 
-    return { author, keywords: normalKeywords, filters };
+    const normalKeywords = keywords.filter(k => !filterRegex.test(k));
+    // const normalNegativeKeywords = negativeKeywords.filter(k => !filterRegex.test(k));
+
+    return { author, keywords: normalKeywords, negativeKeywords: negativeKeywords, filters };
   }
-
 
   async function performSearch(query: string) {
     if (!query) return [];
 
     // クエリを解析
-    const { author, keywords, filters } = parseQuery(query);
+    const { author, keywords, negativeKeywords, filters } = parseQuery(query);
 
     // 作者で絞り込むスレッドIDのセット
     const targetThreads = author
@@ -178,6 +193,19 @@ import fetchIndex from "./fetchIndex";
       return [];
     }
 
+    // マイナス検索のための除外スレッドを収集
+    const excludedThreads = new Set<number>();
+    for (const negKeyword of negativeKeywords) {
+
+      const negTokens = tokenizer.tokenizeSync(negKeyword);
+      for (const token of negTokens) {
+        if (token.word_id) {
+          const occurrences = file.words_index[token.word_id] || [];
+          occurrences.forEach(occ => excludedThreads.add(occ.t));
+        }
+      }
+    }
+
     // キーワードがない場合は全スレッドを対象とする
     if (keywords.length === 0) {
       const allThreads = Object.keys(file.titles).map(Number);
@@ -186,6 +214,7 @@ import fetchIndex from "./fetchIndex";
           // 作者とフィルターの条件をチェック
           if (targetThreads && !targetThreads.has(threadId)) return false;
           if (filterTargetThreads && !filterTargetThreads.has(threadId)) return false;
+          if (excludedThreads.has(threadId)) return false;  // 除外スレッドをチェック
           return true;
         })
         .map(threadId => ({
@@ -229,8 +258,11 @@ import fetchIndex from "./fetchIndex";
       allResults.push(matchInfo);
     }
 
-    // 結果をマージ
+    // 結果をマージする前に除外スレッドを適用
     const mergedResults = mergeResults(allResults);
+    for (const threadId of excludedThreads) {
+      mergedResults.delete(threadId);
+    }
 
     // スコア計算と結果のソート
     const results = Array.from(mergedResults.entries())
