@@ -34,8 +34,8 @@ import fetchIndex from "./fetchIndex";
     progressText.textContent = '辞書データ読み込み中...';
     progressBar.parentElement?.appendChild(progressText);
     tokenizer = await kuromoji.build({
-      dicPath: "./ipadic",
-      dicType: "IPAdic"
+      dicPath: "./aimasu",
+      dicType: "UniDic"
     });
     progressText.textContent = '辞書データ読み込み完了...';
     progressText.style.position = 'absolute';
